@@ -50,6 +50,7 @@ const video = document.getElementById('video');
 const detectedDiv = document.getElementById('detected');
 const translationDiv = document.getElementById('translation');
 
+// Start camera
 async function startCamera() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
@@ -60,7 +61,7 @@ async function startCamera() {
   }
 }
 
-// Translate Serbian text to English using LibreTranslate API
+// Translate text using LibreTranslate
 async function translateText(text) {
   try {
     const res = await fetch('https://libretranslate.com/translate', {
@@ -81,18 +82,19 @@ async function translateText(text) {
   }
 }
 
-// Scan frame for OCR and translation
+// OCR and translation loop
 async function scanFrame() {
   if(video.readyState !== video.HAVE_ENOUGH_DATA){
     requestAnimationFrame(scanFrame);
     return;
   }
 
+  // Capture frame to canvas
   const canvas = document.createElement('canvas');
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  ctx.drawImage(video,0,0,canvas.width,canvas.height);
 
   try {
     const { data: { text } } = await Tesseract.recognize(canvas, 'srp', { logger: m => console.log(m) });
@@ -110,7 +112,7 @@ async function scanFrame() {
   requestAnimationFrame(scanFrame);
 }
 
-// Start camera and scanning
+// Start everything
 startCamera().then(scanFrame);
 </script>
 
