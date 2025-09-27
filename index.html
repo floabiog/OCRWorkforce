@@ -13,108 +13,18 @@
     text-align:center;
     background:#f0f0f0;
   }
-  h1 {
-    margin-top: 15px;
-    color:#2a4d8f;
-  }
-  video {
-    width:90%;
-    max-width:600px;
-    margin-top:10px;
-    border:2px solid #333;
-    border-radius:8px;
-  }
-  #detected {
-    margin-top:15px;
-    font-size:1.2em;
-    color:#222;
-    min-height:40px;
-  }
-  #translation {
-    margin-top:10px;
-    font-size:1.1em;
-    color:#0077cc;
-    min-height:30px;
-  }
+  h1 { margin-top: 15px; color:#2a4d8f; }
+  video { width:90%; max-width:600px; margin-top:10px; border:2px solid #333; border-radius:8px; }
+  #detected { margin-top:15px; font-size:1.2em; color:#222; min-height:40px; }
+  #translation { margin-top:10px; font-size:1.1em; color:#0077cc; min-height:30px; }
 </style>
 </head>
 <body>
 
 <h1>Serbian Text Scanner & Translator</h1>
 <video id="video" autoplay playsinline></video>
-<div id="detected">Detected text will appear here...</div>
+<div id="detected">Detected Serbian text (Latin or Cyrillic) will appear here...</div>
 <div id="translation">English translation will appear here...</div>
 
 <script>
-const video = document.getElementById('video');
-const detectedDiv = document.getElementById('detected');
-const translationDiv = document.getElementById('translation');
-
-// Start camera
-async function startCamera() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-    video.srcObject = stream;
-  } catch(err) {
-    console.error(err);
-    detectedDiv.textContent = "Cannot access camera: " + err.message;
-  }
-}
-
-// Translate text using LibreTranslate
-async function translateText(text) {
-  try {
-    const res = await fetch('https://libretranslate.com/translate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        q: text,
-        source: "sr",
-        target: "en",
-        format: "text"
-      })
-    });
-    const data = await res.json();
-    return data.translatedText;
-  } catch(e) {
-    console.error(e);
-    return "Translation error";
-  }
-}
-
-// OCR and translation loop
-async function scanFrame() {
-  if(video.readyState !== video.HAVE_ENOUGH_DATA){
-    requestAnimationFrame(scanFrame);
-    return;
-  }
-
-  // Capture frame to canvas
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video,0,0,canvas.width,canvas.height);
-
-  try {
-    const { data: { text } } = await Tesseract.recognize(canvas, 'srp', { logger: m => console.log(m) });
-    const trimmed = text.trim();
-    if(trimmed){
-      detectedDiv.textContent = trimmed;
-      // Translate
-      const translation = await translateText(trimmed);
-      translationDiv.textContent = translation;
-    }
-  } catch(e) {
-    console.error(e);
-  }
-
-  requestAnimationFrame(scanFrame);
-}
-
-// Start everything
-startCamera().then(scanFrame);
-</script>
-
-</body>
-</html>
+const video = do
